@@ -1,27 +1,53 @@
-# ImageProcessor 과제 제출
+# ImageProcessor
 
-## 구현 항목
+CLI 기반 BMP 이미지 처리 프로그램입니다.  
+24비트 무압축 BMP 파일을 입력받아 다양한 필터를 적용한 뒤 저장합니다.
 
-- 
-- 
-- 
-- 
+## 개발 환경
 
-## 실행 명령어 (예시)
+- Windows / Visual Studio 2022
+- C++17
 
-<!-- 예시 입니다. 기존 예시를 지우고 구현한 항목에 맞게 명령어를 작성해주세요. -->
+## 빌드 방법
+
+`ImageProcessor.sln` 파일을 Visual Studio에서 열고 빌드합니다.
+
+## 사용법
+## 필터 목록
+
+| 필터 | 명령어 예시 | 설명 |
+|------|------------|------|
+| Grayscale | `--filter grayscale` | 흑백 변환 |
+| 좌우 반전 | `--filter flip_horizontal` | 좌우 반전 |
+| 상하 반전 | `--filter flip_vertical` | 상하 반전 |
+| 이진화 | `--filter threshold:128` | 임계값 기준 흑백 변환 |
+| 밝기 조절 | `--filter brightness:50` | 양수는 밝게, 음수는 어둡게 |
+| 블러 | `--filter blur` | 3x3 평균 블러 |
+| 히스토그램 | `--filter histogram` | 픽셀 분포 콘솔 출력 |
+| 크롭 | `--filter crop:100,100,200,200` | x,y 기준 w×h 영역 잘라내기 |
+| 리사이즈 | `--filter resize:256,256` | 너비×높이로 크기 변경 |
+
+## 실행 예시
 
 ```powershell
-# Grayscale 변환
-.\x64\Release\ImageProcessor.exe --input .\Resource\1_astronaut.bmp --output .\Resource\1_astronaut_grayscale.bmp --filter grayscale
-```
+# 흑백 변환
+.\ImageProcessor.exe --input Resource\1_astronaut.bmp --output Resource\result.bmp --filter grayscale
 
-```powershell
-# Blur 처리 + 임계값 지정
-.\x64\Release\ImageProcessor.exe --input .\Resource\2_coffee.bmp --output .\Resource\2_coffee_blur_threshold.bmp --filter blur --threshold 128
-```
+# 좌우 반전
+.\ImageProcessor.exe --input Resource\1_astronaut.bmp --output Resource\result.bmp --filter flip_horizontal
 
-```powershell
-# 필터 파이프라인 체인(고급)
-.\x64\Release\ImageProcessor.exe --input .\Resource\3_chelsea_cat.bmp --output .\Resource\3_chelsea_cat_pipeline.bmp --pipeline "grayscale, blur, threshold:128"
+# 이진화 (임계값 128)
+.\ImageProcessor.exe --input Resource\1_astronaut.bmp --output Resource\result.bmp --filter threshold:128
+
+# 밝기 증가
+.\ImageProcessor.exe --input Resource\1_astronaut.bmp --output Resource\result.bmp --filter brightness:50
+
+# 블러
+.\ImageProcessor.exe --input Resource\1_astronaut.bmp --output Resource\result.bmp --filter blur
+
+# 크롭 (100,100 위치에서 200x200)
+.\ImageProcessor.exe --input Resource\1_astronaut.bmp --output Resource\result.bmp --filter crop:100,100,200,200
+
+# 리사이즈 (256x256)
+.\ImageProcessor.exe --input Resource\1_astronaut.bmp --output Resource\result.bmp --filter resize:256,256
 ```
