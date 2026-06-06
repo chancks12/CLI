@@ -1,0 +1,129 @@
+/**
+ * @file main.cpp
+ * @brief ImageProcessor 진입점 — 지원자가 작성해야 할 파일입니다.
+ *
+ * BMP 입출력과 커맨드라인 파싱은 제공된 코드가 처리합니다.
+ * 본 과제에서 작성해야 할 것은 단 하나입니다:
+ *
+ *     ▶ 이미지 처리 필터 2개 이상 구현 + main 의 TODO 위치에 연결
+ *
+ * 또한 일관된 컨벤션과 예외 처리, 메모리 안정성도 함께 평가됩니다.
+ */
+
+#include "BmpParser.h"
+#include "CommandLineParser.h"
+#include "ImageBuffer.h"
+#include "Exceptions.h"
+
+#include <iostream>
+#include "GrayscaleFilter.h"
+#include "FlipFilter.h"
+#include "ThresholdFilter.h"
+#include "BrightnessFilter.h"
+#include "BlurFilter.h"
+#include "HistogramFilter.h"
+#include "CropFilter.h"
+#include "ResizeFilter.h"
+
+ // TODO: 본인이 구현한 필터 헤더를 include 하세요.
+ // #include "ThresholdFilter.h"
+ // ...
+
+int main(int argc, char* argv[]) {
+    try {
+        // ── CLI 인자 파싱 (제공된 코드) ─────────────────────────
+        const ip::ProgramOptions options = ip::CommandLineParser::parse(argc, argv);
+
+        // ── BMP 로드 (제공된 코드) ──────────────────────────────
+        ip::ImageBuffer image = ip::BmpParser::loadFromFile(options.inputPath);
+        std::cout << "Loaded: " << image.width() << " x " << image.height() << "\n";
+
+        // ───────────────────────────────────────────────────────
+        // TODO: options.filterName 에 따라 적절한 필터를 생성하고
+        //       image 에 적용하세요.
+        //
+        //   예시 코드 (참고용):
+        //
+        if (options.filterName == "grayscale") {
+            ip::GrayscaleFilter filter;
+            filter.apply(image);
+        }
+        else if (options.filterName == "flip_horizontal") {
+            ip::FlipFilter filter("horizontal");
+            filter.apply(image);
+        }
+        else if (options.filterName == "flip_vertical") {
+            ip::FlipFilter filter("vertical");
+            filter.apply(image);
+        }
+        else if (options.filterName.substr(0, 10) == "threshold:") {
+            int value = std::stoi(options.filterName.substr(10));
+            ip::ThresholdFilter filter(value);
+            filter.apply(image);
+        }
+        else if (options.filterName.substr(0, 11) == "brightness:") {
+            int delta = std::stoi(options.filterName.substr(11));
+            ip::BrightnessFilter filter(delta);
+            filter.apply(image);
+        }
+        else if (options.filterName == "blur") {
+            ip::BlurFilter filter;
+            filter.apply(image);
+        }
+        else if (options.filterName == "histogram") {
+            ip::HistogramFilter filter;
+            filter.apply(image);
+        }
+        else if (options.filterName.substr(0, 5) == "crop:") {
+            std::string params = options.filterName.substr(5);
+            int x, y, w, h;
+            sscanf_s(params.c_str(), "%d,%d,%d,%d", &x, &y, &w, &h);
+            ip::CropFilter filter(x, y, w, h);
+            filter.apply(image);
+        }
+        else if (options.filterName.substr(0, 7) == "resize:") {
+            std::string params = options.filterName.substr(7);
+            int w, h;
+            sscanf_s(params.c_str(), "%d,%d", &w, &h);
+            ip::ResizeFilter filter(w, h);
+            filter.apply(image);
+        }
+        else {
+            throw ip::FilterError("Unknown filter: " + options.filterName);
+        }
+
+        //
+        //   ※ 가산점 항목:
+        //     - 추상 클래스(FilterBase) 기반 다형성 설계
+        //     - 필터 파이프라인 체인 (CLI 옵션 확장 필요)
+        //     - 멀티쓰레드 처리
+        //     - 로그 파일 출력 (CLI 옵션 확장 필요)
+        // ───────────────────────────────────────────────────────
+
+        // ↓ 여기에 필터 적용 코드를 작성하세요.
+
+
+
+        // ── BMP 저장 (제공된 코드) ──────────────────────────────
+        ip::BmpParser::saveToFile(options.outputPath, image);
+        std::cout << "Saved:  " << options.outputPath << "\n";
+        return 0;
+    }
+    catch (const ip::ArgumentError& e) {
+        std::cerr << e.what() << "\n\n";
+        ip::CommandLineParser::printUsage(argc > 0 ? argv[0] : "ImageProcessor");
+        return 4;
+    }
+    catch (const ip::BmpParseError& e) {
+        std::cerr << e.what() << std::endl;
+        return 2;
+    }
+    catch (const ip::FilterError& e) {
+        std::cerr << e.what() << std::endl;
+        return 3;
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Unexpected error: " << e.what() << std::endl;
+        return 1;
+    }
+}

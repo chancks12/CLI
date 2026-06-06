@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LocalDebuggerCommandArguments>--input Resource/1_astronaut.bmp --output Resource/result.bmp --filter resize:256,256</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommandArgumentsHistory>--input Resource/1_astronaut.bmp --output Resource/result.bmp --filter brightness:-50|--input Resource/1_astronaut.bmp --output Resource/result.bmp --filter blur|--input Resource/1_astronaut.bmp --output Resource/result.bmp --filter histogram|--input Resource/1_astronaut.bmp --output Resource/result.bmp --filter crop:100,100,200,200|--input Resource/1_astronaut.bmp --output Resource/result.bmp --filter resize:256,256|</LocalDebuggerCommandArgumentsHistory>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LocalDebuggerCommandArguments>--input Resource/1_astronaut.bmp --output Resource/result.bmp --filter flip_horizontal</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerWorkingDirectory>$(ProjectDir)</LocalDebuggerWorkingDirectory>
+  </PropertyGroup>
+</Project>
